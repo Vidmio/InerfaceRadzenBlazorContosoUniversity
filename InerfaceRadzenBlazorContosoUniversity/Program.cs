@@ -1,7 +1,10 @@
 using InerfaceRadzenBlazorContosoUniversity.Components;
 using InerfaceRadzenBlazorContosoUniversity.Model;
+using InerfaceRadzenBlazorContosoUniversity.Repository.Interface;
 using Radzen;
 using Microsoft.EntityFrameworkCore;
+using InerfaceRadzenBlazorContosoUniversity.Repository;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddRadzenComponents();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
