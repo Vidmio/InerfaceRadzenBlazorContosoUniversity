@@ -1,5 +1,7 @@
 using InerfaceRadzenBlazorContosoUniversity.Components;
+using InerfaceRadzenBlazorContosoUniversity.Model;
 using Radzen;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,11 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddRadzenComponents();
+
+
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DataConnectionString"), sqlServerOptions => sqlServerOptions.CommandTimeout(120)),
+            ServiceLifetime.Transient);
 
 var app = builder.Build();
 
