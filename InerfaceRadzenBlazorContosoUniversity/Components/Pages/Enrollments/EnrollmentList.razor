@@ -1,0 +1,107 @@
+﻿@page "/enrollments"
+@using Repository.Interface
+@using Model
+
+@inject NotificationService NotificationService
+@inject DialogService DialogService
+@inject IGenericRepository<Enrollment> EnrollmentRepository
+
+<RadzenDataGrid Data="@enrollments" TItem="Enrollment" AllowFiltering="true" FilterMode="FilterMode.Simple" AllowSorting="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+    <HeaderTemplate>
+        <RadzenText TextStyle="TextStyle.DisplayH4">Enrollments</RadzenText>
+        <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Button" Text="ADD" Icon="add" class="mb-2" Click="ShowInsertForm" />
+    </HeaderTemplate>
+    <Columns>
+        <RadzenDataGridColumn TItem="Enrollment" Property="ID" Title="ID" Filterable="true" Width="200px" />
+        <RadzenDataGridColumn TItem="Enrollment" Property="Course.Title" Title="Course Title" Filterable="true" Width="200px" />
+        <RadzenDataGridColumn TItem="Enrollment" Title="Student full name">
+            <Template>
+                <RadzenText>@(string.Concat(context.Student.FirstMidName, " ", context.Student.LastName))</RadzenText>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Enrollment" Width="80px" TextAlign="TextAlign.End" Filterable="false" Sortable="false" Pickable="false">
+            <Template>
+                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Icon="edit" Size="ButtonSize.ExtraSmall" Click="@(() => ShowUpdateForm(context))" />
+                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Icon="delete" Size="ButtonSize.ExtraSmall" Click="@(() => Delete(context))" />
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    public List<Enrollment> enrollments = new List<Enrollment>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
+    public async void ShowUpdateForm(Enrollment enrollment)
+    {
+        dynamic x = await DialogService.OpenAsync<EnrollmentForm>("Edit", new Dictionary<string, object>()
+        {
+            {"Id",enrollment.ID}
+        });
+        if (x != null && x is bool)
+        {
+            if (x)
+            {
+                await Refresh();
+                NotificationService.Notify(NotificationSeverity.Success, "Uspešno", "Izmene uspešno sačuvane", 3000);
+            }
+            else
+            {
+                NotificationService.Notify(NotificationSeverity.Error, "Greška", "Greška prilikom izmene", 7000);
+            }
+        }
+
+    }
+
+    public async Task ShowInsertForm()
+    {
+        dynamic x = await DialogService.OpenAsync<EnrollmentForm>("New");
+        if (x != null && x is bool)
+        {
+            if (x)
+            {
+                await Refresh();
+                NotificationService.Notify(NotificationSeverity.Success, "Uspešno", "Uspešno sačuvan autor", 3000);
+            }
+            else
+            {
+                NotificationService.Notify(NotificationSeverity.Error, "Greška", "Greška prilikom dodavanja", 7000);
+            }
+        }
+    }
+
+    public async Task Refresh()
+    {
+        enrollments = await EnrollmentRepository.Get();
+        StateHasChanged();
+    }
+
+
+    protected async Task Delete(Enrollment del)
+    {
+        var confirmResult = await DialogService.Confirm("Da li ste sigurni?", "Obriši", new ConfirmOptions() { OkButtonText = "Da", CancelButtonText = "Ne" });
+
+        if (confirmResult.HasValue && confirmResult.Value)
+        {
+            dynamic x = EnrollmentRepository.Delete(del);
+
+            if (x != null && x is bool)
+            {
+                if (x)
+                {
+                    await Refresh();
+                    NotificationService.Notify(NotificationSeverity.Success, "Uspešno", "Uspešno obrisan", 3000);
+                }
+                else
+                {
+                    NotificationService.Notify(NotificationSeverity.Error, "Greška", "Greška prilikom brisanja", 7000);
+                }
+            }
+        }
+    }
+
+}
