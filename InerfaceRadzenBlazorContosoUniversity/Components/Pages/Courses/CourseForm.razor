@@ -1,0 +1,79 @@
+﻿@using Repository.Interface
+@using Model
+
+@inject NotificationService NotificationService
+@inject DialogService DialogService
+@inject IGenericRepository<Course> CourseRepository
+
+
+<RadzenTemplateForm TItem="Course" Data="@obj" Submit="SaveForm">
+    <RadzenFieldset Text="Basic data">
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" RowGap="1rem">
+            <RadzenColumn Size="12">
+                <RadzenFormField Text="Title" Style="width: 100%">
+                    <ChildContent>
+                        <RadzenTextBox Name="Title" @bind-Value="obj.Title" />
+                    </ChildContent>
+                    <Helper>
+                        <RadzenLengthValidator Component="Title" Text="predugačako (max 50 karaktera)" Max="50" />
+                    </Helper>
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn Size="12">
+                <RadzenFormField Text="Credits" Style="width: 100%">
+                    <ChildContent>
+                        <RadzenNumeric Name="Credits" @bind-Value="obj.Credits" />
+                    </ChildContent>
+                    <Helper>
+                        <RadzenLengthValidator Component="Credits" Text="predugačako (max 50 karaktera)" Max="50" />
+                    </Helper>
+                </RadzenFormField>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenFieldset>
+
+    <RadzenRow JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" class="rz-mt-4">
+        <RadzenColumn Size="6" class="rz-text-align-end">
+            <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Icon="save" Text="Sačuvaj" />
+        </RadzenColumn>
+        <RadzenColumn Size="6" class="rz-text-align-start">
+            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Light" Icon="cancel" Style="display: inline-block; margin-left: 10px;" Text="Poništi" Click="Close" />
+        </RadzenColumn>
+    </RadzenRow>
+
+</RadzenTemplateForm>
+
+
+@code {
+    [Parameter]
+    public int ID { get; set; }
+    public Course obj = new Course();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ID != 0)
+        {
+            obj = await CourseRepository.Get(ID);
+        }
+    }
+
+    public void SaveForm()
+    {
+        if (ID != 0)
+        {
+            bool result = CourseRepository.Update(obj);
+            DialogService.Close(result);
+        }
+        else
+        {
+            bool result = CourseRepository.Add(obj);
+            DialogService.Close(result);
+        }
+
+    }
+
+    public void Close()
+    {
+        DialogService.Close();
+    }
+}

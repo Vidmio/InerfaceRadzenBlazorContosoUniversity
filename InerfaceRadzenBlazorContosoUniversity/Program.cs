@@ -16,6 +16,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IGenericRepository<Student>, GStudentRepository>();
+builder.Services.AddScoped<IGenericRepository<Course>, CourseRepository>();
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DataConnectionString"), sqlServerOptions => sqlServerOptions.CommandTimeout(120)),
