@@ -14,8 +14,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddRadzenComponents();
-builder.Services.AddScoped<IStudentRepository, StudentRepository>();
-builder.Services.AddScoped<IGenericRepository<Student>, GStudentRepository>();
+builder.Services.AddScoped<ICustomStudentRepository, CustomStudentRepository>();
+builder.Services.AddScoped<IGenericRepository<Student>, StudentRepository>();
 builder.Services.AddScoped<IGenericRepository<Course>, CourseRepository>();
 builder.Services.AddScoped<IGenericRepository<Enrollment>, EnrollmentRepository>();
 

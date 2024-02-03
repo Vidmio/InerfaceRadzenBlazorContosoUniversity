@@ -4,7 +4,7 @@
 
 @inject NotificationService NotificationService
 @inject DialogService DialogService
-@inject IGenericRepository<Course> CourseRepository
+@inject IGenericRepository<Course> Repository
 
 <RadzenDataGrid Data="@courses" TItem="Course" AllowFiltering="true" FilterMode="FilterMode.Simple" AllowSorting="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
     <HeaderTemplate>
@@ -72,7 +72,7 @@
 
     public async Task Refresh()
     {
-        courses = await CourseRepository.Get();
+        courses = await Repository.Get();
         StateHasChanged();
     }
 
@@ -83,7 +83,7 @@
 
         if (confirmResult.HasValue && confirmResult.Value)
         {
-            dynamic x = CourseRepository.Delete(del);
+            dynamic x = Repository.Delete(del);
 
             if (x != null && x is bool)
             {

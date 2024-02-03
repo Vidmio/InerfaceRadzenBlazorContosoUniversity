@@ -1,10 +1,10 @@
-﻿@page "/gstudents"
+﻿@page "/studentsold"
 @using Repository.Interface
 @using Model
 
 @inject NotificationService NotificationService
 @inject DialogService DialogService
-@inject IGenericRepository<Student> GStudentRepository
+@inject ICustomStudentRepository StudentRepository
 
 <RadzenDataGrid Data="@students" TItem="Student" AllowFiltering="true" FilterMode="FilterMode.Simple" AllowSorting="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
     <HeaderTemplate>
@@ -34,7 +34,7 @@
 
     public async void ShowUpdateForm(Student student)
     {
-        dynamic x = await DialogService.OpenAsync<GStudentForm>("Edit", new Dictionary<string, object>()
+        dynamic x = await DialogService.OpenAsync<StudentForm>("Edit", new Dictionary<string, object>()
         {
             {"Id",student.ID}
         });
@@ -55,7 +55,7 @@
 
     public async Task ShowInsertForm()
     {
-        dynamic x = await DialogService.OpenAsync<GStudentForm>("New");
+        dynamic x = await DialogService.OpenAsync<StudentForm>("New");
         if (x != null && x is bool)
         {
             if (x)
@@ -72,7 +72,7 @@
 
     public async Task Refresh()
     {
-        students = await GStudentRepository.Get();
+        students = await StudentRepository.Get();
         StateHasChanged();
     }
 
@@ -83,7 +83,7 @@
 
         if (confirmResult.HasValue && confirmResult.Value)
         {
-            dynamic x = GStudentRepository.Delete(del);
+            dynamic x = await StudentRepository.Delete(del);
 
             if (x != null && x is bool)
             {

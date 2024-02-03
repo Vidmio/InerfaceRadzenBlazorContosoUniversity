@@ -1,7 +1,7 @@
 ﻿using InerfaceRadzenBlazorContosoUniversity.Model;
 namespace InerfaceRadzenBlazorContosoUniversity.Repository.Interface
 {
-    public interface IStudentRepository
+    public interface ICustomStudentRepository
     {
         public Task <List<Student>> Get();
         public Task<Student?> Get(int id);

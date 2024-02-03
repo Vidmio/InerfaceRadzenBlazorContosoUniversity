@@ -3,12 +3,12 @@
 
 @inject NotificationService NotificationService
 @inject DialogService DialogService
-@inject IGenericRepository<Student> GStudentRepository
+@inject ICustomStudentRepository StudentRepository
 
 
 <RadzenTemplateForm TItem="Student" Data="@obj" Submit="SaveForm">
     <RadzenFieldset Text="Basic data">
-        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" RowGap="1rem">
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" RowGap="1rem">           
             <RadzenColumn Size="12">
                 <RadzenFormField Text="First Mid Name" Style="width: 100%">
                     <ChildContent>
@@ -29,28 +29,28 @@
                     </Helper>
                 </RadzenFormField>
             </RadzenColumn>
-            @* Comment goes here
+            @* Comment goes here 
             <RadzenColumn Size="12" Style="text-align: center">
-            <RadzenRadioButtonList @bind-Value="generator.Status" TValue="DieselGeneratorStatus">
-            <Items>
-            <RadzenRadioButtonListItem Text="U funkciji" Value="DieselGeneratorStatus.inFunction"/>
-            <RadzenRadioButtonListItem Text="Van funkcije" Value="DieselGeneratorStatus.notInFunction" />
-            <RadzenRadioButtonListItem Text="Promena lokacije" Value="DieselGeneratorStatus.locationChange"/>
-            </Items>
-            </RadzenRadioButtonList>
+                <RadzenRadioButtonList @bind-Value="generator.Status" TValue="DieselGeneratorStatus">
+                    <Items>
+                        <RadzenRadioButtonListItem Text="U funkciji" Value="DieselGeneratorStatus.inFunction"/>
+                        <RadzenRadioButtonListItem Text="Van funkcije" Value="DieselGeneratorStatus.notInFunction" />
+                        <RadzenRadioButtonListItem Text="Promena lokacije" Value="DieselGeneratorStatus.locationChange"/>
+                    </Items>
+                </RadzenRadioButtonList>
             </RadzenColumn>
             *@
         </RadzenRow>
     </RadzenFieldset>
 
-    <RadzenRow JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" class="rz-mt-4">
-        <RadzenColumn Size="6" class="rz-text-align-end">
-            <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Icon="save" Text="Sačuvaj" />
-        </RadzenColumn>
-        <RadzenColumn Size="6" class="rz-text-align-start">
-            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Light" Icon="cancel" Style="display: inline-block; margin-left: 10px;" Text="Poništi" Click="Close" />
-        </RadzenColumn>
-    </RadzenRow>
+        <RadzenRow JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" class="rz-mt-4">
+            <RadzenColumn Size="6" class="rz-text-align-end">
+            <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Icon="save" Text="Sačuvaj"/>
+            </RadzenColumn> 
+            <RadzenColumn Size="6" class="rz-text-align-start">
+                <RadzenButton ButtonType="ButtonType.Button"  ButtonStyle="ButtonStyle.Light" Icon="cancel" Style="display: inline-block; margin-left: 10px;" Text="Poništi" Click="Close"/>
+            </RadzenColumn>
+        </RadzenRow>
 
 </RadzenTemplateForm>
 
@@ -62,23 +62,23 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (ID != 0)
+        if (ID !=0)
         {
-            obj = await GStudentRepository.Get(ID);
+            obj = await StudentRepository.Get(ID);
         }
     }
 
-    public void SaveForm()
+    public async Task SaveForm()
     {
-        if (ID != 0)
+        if  (ID != 0)
         {
-            bool result =GStudentRepository.Update(obj);
+            bool result = await StudentRepository.Update(obj);
             DialogService.Close(result);
         }
         else
         {
             @*autor.ID = Guid.NewGuid();*@
-            bool result = GStudentRepository.Add(obj);
+            bool result = await StudentRepository.Add(obj);
             DialogService.Close(result);
         }
 
