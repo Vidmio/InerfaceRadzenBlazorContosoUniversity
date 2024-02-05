@@ -1,0 +1,103 @@
+﻿@page "/studentsGeneric"
+@using Repository.Interface
+@using Model
+
+@inject NotificationService NotificationService
+@inject DialogService DialogService
+@inject IGenericRepository<Student> Repository
+
+<RadzenDataGrid Data="@students" TItem="Student" AllowFiltering="true" FilterMode="FilterMode.Simple" AllowSorting="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+    <HeaderTemplate>
+        <RadzenText TextStyle="TextStyle.DisplayH4">Students GENERIC</RadzenText>
+        <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Button" Text="ADD" Icon="add" class="mb-2" Click="ShowInsertForm" />
+    </HeaderTemplate>
+    <Columns>
+        <RadzenDataGridColumn TItem="Student" Property="ID" Title="ID" Filterable="true" Width="200px" />
+        <RadzenDataGridColumn TItem="Student" Property="LastName" Title="Last Name" Filterable="true" Width="200px" />
+        <RadzenDataGridColumn TItem="Student" Property="FirstMidName" Title="First Mid Name" Filterable="true" Width="200px" />
+        <RadzenDataGridColumn TItem="Student" Width="80px" TextAlign="TextAlign.End" Filterable="false" Sortable="false" Pickable="false">
+            <Template Context="context">
+                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Icon="edit" Size="ButtonSize.ExtraSmall" Click="@(() => ShowUpdateForm(context))" />
+                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Icon="delete" Size="ButtonSize.ExtraSmall" Click="@(() => Delete(context))" />
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    public List<Student> students = new List<Student>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
+    public async void ShowUpdateForm(Student student)
+    {
+        dynamic x = await DialogService.OpenAsync<StudentForm>("Edit", new Dictionary<string, object>()
+        {
+            {"Id",student.ID}
+        });
+        if (x != null && x is bool)
+        {
+            if (x)
+            {
+                await Refresh();
+                NotificationService.Notify(NotificationSeverity.Success, "Uspešno", "Izmene uspešno sačuvane", 5000);
+            }
+            else
+            {
+                NotificationService.Notify(NotificationSeverity.Error, "Greška", "Greška prilikom izmene");
+            }
+        }
+
+    }
+
+    public async Task ShowInsertForm()
+    {
+        dynamic x = await DialogService.OpenAsync<StudentForm>("New");
+        if (x != null && x is bool)
+        {
+            if (x)
+            {
+                await Refresh();
+                NotificationService.Notify(NotificationSeverity.Success, "Uspešno", "Uspešno sačuvan", 5000);
+            }
+            else
+            {
+                NotificationService.Notify(NotificationSeverity.Error, "Greška", "Greška prilikom dodavanja novog");
+            }
+        }
+    }
+
+    public async Task Refresh()
+    {
+        students = await Repository.Get();
+        StateHasChanged();
+    }
+
+
+    protected async Task Delete(Student del)
+    {
+        var confirmResult = await DialogService.Confirm("Da li ste sigurni?", "Obriši", new ConfirmOptions() { OkButtonText = "Da", CancelButtonText = "Ne" });
+
+        if (confirmResult.HasValue && confirmResult.Value)
+        {
+            dynamic x = Repository.Delete(del);
+
+            if (x != null && x is bool)
+            {
+                if (x)
+                {
+                    await Refresh();
+                    NotificationService.Notify(NotificationSeverity.Success, "Uspešno", "Uspešno obrisan", 5000);
+                }
+                else
+                {
+                    NotificationService.Notify(NotificationSeverity.Error, "Greška", "Greška prilikom brisanja");
+                }
+            }
+        }
+    }
+
+}

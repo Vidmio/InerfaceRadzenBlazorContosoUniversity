@@ -15,9 +15,12 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<ICustomStudentRepository, CustomStudentRepository>();
-builder.Services.AddScoped<IGenericRepository<Student>, StudentRepository>();
+//builder.Services.AddScoped<IGenericRepository<Student>, StudentRepository>();
 builder.Services.AddScoped<IGenericRepository<Course>, CourseRepository>();
 builder.Services.AddScoped<IGenericRepository<Enrollment>, EnrollmentRepository>();
+
+builder.Services.AddScoped<IGenericRepository<Student>, GenericRepository<Student>>();
+
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DataConnectionString"), sqlServerOptions => sqlServerOptions.CommandTimeout(120)),

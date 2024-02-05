@@ -1,0 +1,90 @@
+﻿@using Repository.Interface
+@using Model
+
+@inject NotificationService NotificationService
+@inject DialogService DialogService
+@inject IGenericRepository<Student> StudentRepository
+
+<RadzenTemplateForm TItem="Student" Data="@obj" Submit="SaveForm">
+    <RadzenFieldset Text="Basic data">
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" RowGap="1rem">
+            <RadzenColumn Size="12">
+                <RadzenFormField Text="First Mid Name" Style="width: 100%">
+                    <ChildContent>
+                        <RadzenTextBox Name="ImeTextBox" @bind-Value="obj.FirstMidName" />
+                    </ChildContent>
+                    <Helper>
+                        <RadzenLengthValidator Component="ImeTextBox" Text="predugačako (max 50 karaktera)" Max="50" />
+                    </Helper>
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn Size="12">
+                <RadzenFormField Text="Last Name" Style="width: 100%">
+                    <ChildContent>
+                        <RadzenTextBox Name="PrezimeTextBox" @bind-Value="obj.LastName" />
+                    </ChildContent>
+                    <Helper>
+                        <RadzenLengthValidator Component="PrezimeTextBox" Text="predugačako (max 50 karaktera)" Max="50" />
+                    </Helper>
+                </RadzenFormField>
+            </RadzenColumn>
+            @* Comment goes here
+            <RadzenColumn Size="12" Style="text-align: center">
+            <RadzenRadioButtonList @bind-Value="generator.Status" TValue="DieselGeneratorStatus">
+            <Items>
+            <RadzenRadioButtonListItem Text="U funkciji" Value="DieselGeneratorStatus.inFunction"/>
+            <RadzenRadioButtonListItem Text="Van funkcije" Value="DieselGeneratorStatus.notInFunction" />
+            <RadzenRadioButtonListItem Text="Promena lokacije" Value="DieselGeneratorStatus.locationChange"/>
+            </Items>
+            </RadzenRadioButtonList>
+            </RadzenColumn>
+            *@
+        </RadzenRow>
+    </RadzenFieldset>
+
+    <RadzenRow JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" class="rz-mt-4">
+        <RadzenColumn Size="6" class="rz-text-align-end">
+            <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Icon="save" Text="Sačuvaj" />
+        </RadzenColumn>
+        <RadzenColumn Size="6" class="rz-text-align-start">
+            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Light" Icon="cancel" Style="display: inline-block; margin-left: 10px;" Text="Poništi" Click="Close" />
+        </RadzenColumn>
+    </RadzenRow>
+
+</RadzenTemplateForm>
+
+
+@code {
+    [Parameter]
+    public int ID { get; set; }
+    public Student obj = new Student();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ID != 0)
+        {
+            obj = await StudentRepository.Get(ID);
+        }
+    }
+
+    public void SaveForm()
+    {
+        if (ID != 0)
+        {
+            bool result = StudentRepository.Update(obj);
+            DialogService.Close(result);
+        }
+        else
+        {
+            @*autor.ID = Guid.NewGuid();*@
+            bool result = StudentRepository.Add(obj);
+            DialogService.Close(result);
+        }
+
+    }
+
+    public void Close()
+    {
+        DialogService.Close();
+    }
+}
