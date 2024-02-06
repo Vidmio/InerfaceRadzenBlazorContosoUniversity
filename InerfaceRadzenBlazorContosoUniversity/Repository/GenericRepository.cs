@@ -14,7 +14,7 @@ namespace InerfaceRadzenBlazorContosoUniversity.Repository
             _context = context;
         }
 
-        public async Task<List<TEntity>> Get()
+        public virtual async Task<List<TEntity>> Get()
         {
             using var db = await _context.CreateDbContextAsync();
             return await Task.Run(() => db.Set<TEntity>().ToListAsync());
