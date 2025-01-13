@@ -3,7 +3,7 @@
 
 @inject NotificationService NotificationService
 @inject DialogService DialogService
-@inject IGenericRepository<Course> CourseRepository
+@inject IGenericRepository<Course> Repository
 
 
 <RadzenTemplateForm TItem="Course" Data="@obj" Submit="SaveForm">
@@ -53,7 +53,7 @@
     {
         if (ID != 0)
         {
-            obj = await CourseRepository.Get(ID);
+            obj = await Repository.Get(ID);
         }
     }
 
@@ -61,12 +61,12 @@
     {
         if (ID != 0)
         {
-            bool result = CourseRepository.Update(obj);
+            bool result = Repository.Update(obj);
             DialogService.Close(result);
         }
         else
         {
-            bool result = CourseRepository.Add(obj);
+            bool result = Repository.Add(obj);
             DialogService.Close(result);
         }
 

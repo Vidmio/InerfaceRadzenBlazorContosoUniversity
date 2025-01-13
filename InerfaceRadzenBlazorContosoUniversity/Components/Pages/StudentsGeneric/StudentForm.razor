@@ -3,7 +3,7 @@
 
 @inject NotificationService NotificationService
 @inject DialogService DialogService
-@inject IGenericRepository<Student> StudentRepository
+@inject IGenericRepository<Student> Repository
 
 <RadzenTemplateForm TItem="Student" Data="@obj" Submit="SaveForm">
     <RadzenFieldset Text="Basic data">
@@ -63,7 +63,7 @@
     {
         if (ID != 0)
         {
-            obj = await StudentRepository.Get(ID);
+            obj = await Repository.Get(ID);
         }
     }
 
@@ -71,13 +71,13 @@
     {
         if (ID != 0)
         {
-            bool result = StudentRepository.Update(obj);
+            bool result = Repository.Update(obj);
             DialogService.Close(result);
         }
         else
         {
             @*autor.ID = Guid.NewGuid();*@
-            bool result = StudentRepository.Add(obj);
+            bool result = Repository.Add(obj);
             DialogService.Close(result);
         }
 
